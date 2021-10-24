@@ -8,6 +8,9 @@
     "start": "node backend/index.js",
     "build": "cd frontend && npm install && npm run build"
   },
+  "engines": {
+    "node": "12.19.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tahirgalvez/310project.git"
