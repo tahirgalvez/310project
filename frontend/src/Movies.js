@@ -4,6 +4,7 @@ import { Container } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table'
 import InputGroup from 'react-bootstrap/InputGroup'
 import { FormControl } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
 
 class Movies extends React.Component {
 
@@ -27,9 +28,14 @@ class Movies extends React.Component {
                 <h1>Movies</h1>
                 <br />
                 <InputGroup size="lg">
-                    <InputGroup.Text id="inputGroup-sizing-lg">Search Title</InputGroup.Text>
-                    <FormControl onChange={(e)=>this.searchMovies(e)} aria-label="Large" aria-describedby="inputGroup-sizing-sm" />
+                    <Button variant ="outline-secondary"
+                      id="movies-search-button"
+                      onClick={(e)=>this.searchMovies(e)}
+                      > Search Title
+                    </Button>
+                    <FormControl aria-label="Large" aria-describedby="inputGroup-sizing-sm" />
                 </InputGroup>
+
                 <br />
                 <Table striped bordered hover>
                     <thead>

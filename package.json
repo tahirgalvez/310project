@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/tahirgalvez/310project#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "js-search": "^2.0.0"
   }
 }
