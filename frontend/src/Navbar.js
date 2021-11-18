@@ -4,9 +4,10 @@ import { Container } from 'react-bootstrap';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
-import Actors from './Actors';
+import Shows from './Shows';
 import Movies from './Movies';
-import Directors from './Directors';
+import CrewCast from './CrewCast';
+
 
 function NavigationBar() {
     return (
@@ -14,8 +15,8 @@ function NavigationBar() {
             <Container>
                 <Navbar.Brand href="/movies">Movies</Navbar.Brand>
                 <Nav className="me-auto">
-                    <Nav.Link href="/actors">Actors</Nav.Link>
-                    <Nav.Link href="/directors">Directors</Nav.Link>
+                    <Nav.Link href="/Shows">Shows</Nav.Link>
+                    <Nav.Link href="/crewcast">Crew&Cast</Nav.Link>
                 </Nav>
             </Container>
         </Navbar>
@@ -34,8 +35,8 @@ class Navvv extends React.Component {
                         <Switch title="switch">
                             <Route exact path="/" component={Movies} />
                             <Route exact path="/movies" component={Movies} />
-                            <Route exact path="/actors" component={Actors} />
-                            <Route exact path="/directors" component={Directors} />
+                            <Route exact path="/shows" component={Shows} />
+                            <Route exact path="/crewcast" component={CrewCast} />
                             <Route component={Movies} />
                         </Switch>
                     </Container>
