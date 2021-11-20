@@ -17,7 +17,7 @@ app.get("/api", (req, res) => {
 app.get("/titles", async (req, res) => {
   try{
     const response = await pool.query("SELECT * FROM title");
-    res.json({ response });
+    res.json(response.rows);
   }
   catch (err) {
     console.error(err.message);
