@@ -1,4 +1,4 @@
-console.log("db.js running");
+console.log("dbrgra.js running");
 
 const Pool = require("pg").Pool;
 
@@ -11,9 +11,3 @@ const pool = new Pool({
 });
 
 module.exports = pool;
-
-function getAllTitles() {
-    return "SELECT * FROM title";
-}
-
-
