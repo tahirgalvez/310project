@@ -12,13 +12,9 @@ const Pool = require("pg").Pool;
 // });
 
 //heroku database
+const connectionString = 'postgres://oaxmrpctgtjdyk:879d07a71cedbc3f2c4e1720177eb73dce983b73369f8a03aa01d1e84d4fa0e0@ec2-3-230-149-158.compute-1.amazonaws.com:5432/dsie04961744k'
 const pool = new Pool({
-    user: "oaxmrpctgtjdyk",
-    password: "879d07a71cedbc3f2c4e1720177eb73dce983b73369f8a03aa01d1e84d4fa0e0",
-    database: "dsie04961744k",
-    host: "ec2-3-230-149-158.compute-1.amazonaws.com",
-    port: "5432",
-    ssl: true
-});
+  connectionString,
+})
 
 module.exports = pool;
