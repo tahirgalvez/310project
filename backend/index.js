@@ -1,7 +1,6 @@
 // server/index.js
 const express = require("express");
 const path = require('path');
-const PORT = 3001;
 const app = express();
 const pool = require("./db_setting");
 
@@ -9,8 +8,8 @@ const pool = require("./db_setting");
 const dbf = require("./db_functions");
 var dbfunc = new dbf;
 
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
+app.listen(process.env.PORT || 3001 , () => {
+  console.log(`Server listening on 3001`);
 });
 
 app.get("/api", (req, res) => {
