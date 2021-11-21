@@ -26,7 +26,8 @@
     "express": "^4.17.1",
     "js-search": "^2.0.0",
     "nodemon": "^2.0.15",
-    "pg": "^8.7.1"
+    "pg": "^8.7.1",
+    "react-popup": "^0.10.0"
   },
   "devDependencies": {}
 }
