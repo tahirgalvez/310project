@@ -69,6 +69,7 @@ class Movies extends React.Component {
     this.setState({
       visible: false
     });
+  };
 
   handleCancel = e => {
     console.log(e);
@@ -87,7 +88,6 @@ class Movies extends React.Component {
   render() {
     const { selectedRowKey } = this.state;
     console.log(selectedRowKey, typeof selectedRowKey);
-
 
     return (
       <Container align='center'>
