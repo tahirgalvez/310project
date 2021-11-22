@@ -6,6 +6,7 @@ import { Table, Modal } from "antd";
 import InputGroup from 'react-bootstrap/InputGroup'
 import { FormControl } from 'react-bootstrap';
 import {Button} from "react-bootstrap";
+import ReactHtmlParser from "react-html-parser";
 
 const columns = [
   {
@@ -54,7 +55,7 @@ class Movies extends React.Component {
   constructor(props, context) {
     super(props, context);
     autoBind(this);
-    this.state = { selectedRowKey: null, visible: false };
+    this.state = { selectedRowKey: null, visible: false, selectedMovie: null };
   }
 
   setRowKey(record) {
@@ -62,6 +63,7 @@ class Movies extends React.Component {
     console.log(record);
     console.log(selectedRowKey, typeof selectedRowKey);
     this.setState({ selectedRowKey });
+    this.setState({record});
   }
 
   handleOk = e => {
@@ -116,6 +118,7 @@ class Movies extends React.Component {
               onClick: () => {
                 this.setState({ visible: true });
                 this.setRowKey(record);
+                this.setState({selectedMovie: record.key})
               }
             };
           }}
@@ -123,12 +126,12 @@ class Movies extends React.Component {
         />
 
         <Modal
-          title="Basic Modal"
+          title={ReactHtmlParser(this.state.selectedMovie)}
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
-          <p>document.getElementByID("title").innerHTML</p>
+          <p></p>
           <p>Some contents...</p>
         </Modal>
       </div>
