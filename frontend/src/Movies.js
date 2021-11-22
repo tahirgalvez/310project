@@ -107,6 +107,7 @@ class Movies extends React.Component {
                </InputGroup>
 
       <div className="holder">
+      <p></p>
         <Table
           columns={columns}
           rowKey={record => getRowKey(record)}
