@@ -22,6 +22,15 @@ INSERT INTO title(t_const, title_type, primary_title, original_title, is_adult, 
         return query;
     }
 
+    getTitle(tconst) {
+        var query = `
+SELECT * FROM title 
+    WHERE (title.t_const = ` + tconst + `);`;
+
+        console.log(query);
+        return query;
+    }
+
     searchTitle(title) {
         var query = `
 SELECT * FROM title 
