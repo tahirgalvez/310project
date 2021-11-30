@@ -6,7 +6,6 @@ import { Table, Modal } from "antd";
 import InputGroup from "react-bootstrap/InputGroup";
 import { FormControl } from "react-bootstrap";
 import { Button } from "react-bootstrap";
-import ReactHtmlParser from "react-html-parser";
 
 const columns = [
   {
@@ -94,7 +93,7 @@ class Movies extends React.Component {
 
   searchMovies(e) {
     let newMovies = data.filter((movie) => {
-      return movie.title.indexOf(this.state.searchValue) >= 0;
+      return movie.title.toLowerCase().indexOf(this.state.searchValue.toLowerCase()) >= 0;
     });
     this.setState({ movieData: newMovies });
   }
@@ -138,7 +137,7 @@ class Movies extends React.Component {
                 onClick: () => {
                   this.setState({ visible: true });
                   this.setRowKey(record);
-                  this.setState({ selectedMovie: record.key });
+                  this.setState({ selectedMovie: record });
                 },
               };
             }}
@@ -146,14 +145,14 @@ class Movies extends React.Component {
           />
           {this.state.visible && (
             <Modal
-              title={this.state.movieData[this.state.selectedMovie - 1].title}
+              title={this.state.selectedMovie.title}
               visible={this.state.visible}
               onOk={this.handleOk}
               onCancel={this.handleCancel}
             >
-              <p>Title: {this.state.movieData[this.state.selectedMovie - 1].title}</p>
-              <p>Director: {this.state.movieData[this.state.selectedMovie - 1].director}</p>
-              <p>Year: {this.state.movieData[this.state.selectedMovie - 1].year}</p>
+              <p>Title: {this.state.selectedMovie.title}</p>
+              <p>Director: {this.state.selectedMovie.director}</p>
+              <p>Year: {this.state.selectedMovie.year}</p>
             </Modal>
           )}
         </div>
