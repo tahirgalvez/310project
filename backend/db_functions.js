@@ -112,7 +112,7 @@ DELETE FROM title
      * @param {number} minRating number - Minimum rating (inclusive).
      * @param {number} maxRating number - Max rating (inclusive).
      * @param {string|string[]} genres string|string[] - Genres of the media. Uses AND for all types.
-     * @param {number} page number - Page of UI to display.
+     * @param {number} page number - Page of UI to display. Assumes pages starts at 1.
      * @param {number} itemsPerPage number - Amount of items per page.
      * @returns {string} string - SQL query command to search for media in the title table.
      */
@@ -123,7 +123,8 @@ DELETE FROM title
         }
 
         var query = `
-SELECT * FROM title, rating
+SELECT title.t_const, title.title_type, title.primary_title, title.original_title, title.is_adult, title.start_year, title.end_year, title.runtime_minutes, title.genres, rating.average_rating, rating.num_votes 
+FROM title LEFT JOIN rating on title.t_const = rating.t_const
     WHERE (title.primary_title LIKE \'%${title}%\' OR title.original_title LIKE \'%${title}%\') `;
 
         if (titleType != null) {
@@ -150,7 +151,7 @@ SELECT * FROM title, rating
         }
 
         if (minRunTimeMinutes != null && maxRunTimeMinutes != null) {
-            query += `AND (title.runtime_minutes >= ${minYear} AND title.runtime_minutes <= ${maxYear}) `
+            query += `AND (title.runtime_minutes >= ${minRunTimeMinutes} AND title.runtime_minutes <= ${maxRunTimeMinutes}) `
         }
         else if (minRunTimeMinutes != null) {
             query += `AND (title.runtime_minutes >= ${minRunTimeMinutes}) `
@@ -196,6 +197,71 @@ LIMIT ${itemsPerPage} OFFSET ${(page - 1) * itemsPerPage};`;
         var query = `
 SELECT * FROM episode
     WHERE (episode.parent_t_const = '${tconst}');`;
+
+        console.log(query);
+        return query;
+    }
+
+    // Rating Queries
+    // Basic CRUD for ratings
+    /**
+     * Inserts a rating for a media.
+     * @param {string} tconst string - Foreign key referencing tconst from the title table.
+     * @param {number} average_rating number - The media's average rating.
+     * @param {number} num_votes number - The total number of votes associated with this title's rating.
+     * @returns string - SQL query command to insert a rating into the rating table.
+     */
+    insertRating(tconst, average_rating, num_votes) {
+        var query = `
+INSERT INTO rating(t_const, average_rating, num_votes)
+VALUES ('${tconst}', ${average_rating}, ${num_votes});`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Gets a rating for a media.
+     * @param {string} tconst string - Foreign key referencing tconst from the title table.
+     * @returns string - SQL query command to get a rating from a media.
+     */
+    getRating(tconst) {
+        var query = `
+SELECT * FROM rating
+    WHERE (rating.t_const = '${tconst}');`;
+
+        console.log(query);
+        return query;
+    }
+    
+    /**
+     * Updates a rating from the rating table.
+     * @param {string} tconst string - Foreign key referencing tconst from the title table.
+     * @param {number} average_rating number - The media's average rating.
+     * @param {number} num_votes number - The total number of votes associated with this title's rating.
+     * @returns string - SQL query command to update a rating from the rating table.
+     */
+    updateRating(tconst, average_rating, num_votes) {
+        var query = `
+UPDATE rating
+SET t_const = '${tconst}',
+    average_rating = ${average_rating},
+    num_votes = ${num_votes}
+WHERE (rating.t_const = '${tconst}');`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Deletes a rating from the rating table.
+     * @param {string} tconst string - Foreign key referencing tconst from the title table.
+     * @returns string - SQL query command to delete a rating from the rating table.
+     */
+    deleteRating(tconst) {
+        var query = `
+DELETE FROM rating
+    WHERE (rating.t_const = '${tconst}');`;
 
         console.log(query);
         return query;
