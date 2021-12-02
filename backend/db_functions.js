@@ -1,10 +1,12 @@
 console.log("db_functions.js loading");
 
 const dbf = class DBFunctions{
+    // Title Queries
     getAllTitles() {
         return "SELECT * FROM title";
     }
 
+    // Basic CRUD for titles
     insertTitle(tconst, titletype, primarytitle, originaltitle, isadult, startyear, endyear, runtimeminutes, genres) {
         var query = `
 INSERT INTO title(t_const, title_type, primary_title, original_title, is_adult, start_year, end_year, runtime_minutes, genres)
@@ -25,16 +27,6 @@ INSERT INTO title(t_const, title_type, primary_title, original_title, is_adult, 
         var query = `
 SELECT * FROM title 
     WHERE (title.t_const = ${tconst});`;
-
-        console.log(query);
-        return query;
-    }
-
-    searchTitle(title, page=1, itemsPerPage=50) {
-        var query = `
-SELECT * FROM title 
-    LIMIT ${itemsPerPage} OFFSET ${(page - 1) * itemsPerPage}
-    WHERE (title.primary_title LIKE \'%${title}%\' OR title.original_title LIKE \'%${title}%\');`;
 
         console.log(query);
         return query;
@@ -70,6 +62,40 @@ WHERE title.t_const = '${tconst}';`;
         var query = `
 DELETE FROM title
     WHERE title.t_const = '${tconst}';`;
+
+        console.log(query);
+        return query;
+    }
+
+    // Advanced Search
+    searchTitle(title=null, genre=null, minRating=null, maxRating=null, page=1, itemsPerPage=50) {
+
+        if (title == null) {
+            title = ''
+        }
+        
+        console.log(title + " " + genre + " " + minRating + " " + maxRating + " " + page + " " + itemsPerPage);
+
+
+        var query = `
+SELECT * FROM title, rating
+    WHERE (title.primary_title LIKE \'%${title}%\' OR title.original_title LIKE \'%${title}%\') `;
+
+        if (genre != null) {
+            query += `AND ('${genre}' = ANY(title.genres) `;
+        }
+
+        if (minRating != null && maxRating != null) {
+            query += `AND (title.t_const = rating.t_const) AND (rating.average_rating >= ${minRating} AND rating.average_rating <= ${maxRating})`
+        }
+        else if (minRating != null) {
+            query += `AND (title.t_const = rating.t_const) AND (rating.average_rating >= ${minRating})`
+        }
+        else if (maxRating != null) {
+            query += `AND (title.t_const = rating.t_const) AND (rating.average_rating <= ${maxRating})`
+        }
+        query += `)
+LIMIT ${itemsPerPage} OFFSET ${(page - 1) * itemsPerPage};`;
 
         console.log(query);
         return query;
