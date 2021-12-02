@@ -121,8 +121,6 @@ DELETE FROM title
         if (title == null) {
             title = ''
         }
-        //console.log(title + " " + genre + " " + minRating + " " + maxRating + " " + page + " " + itemsPerPage);
-
 
         var query = `
 SELECT * FROM title, rating
@@ -162,13 +160,13 @@ SELECT * FROM title, rating
         }
 
         if (minRating != null && maxRating != null) {
-            query += `AND (title.t_const = rating.t_const) AND (rating.average_rating >= ${minRating} AND rating.average_rating <= ${maxRating})`
+            query += `AND (title.t_const = rating.t_const) AND (rating.average_rating >= ${minRating} AND rating.average_rating <= ${maxRating}) `
         }
         else if (minRating != null) {
-            query += `AND (title.t_const = rating.t_const) AND (rating.average_rating >= ${minRating})`
+            query += `AND (title.t_const = rating.t_const) AND (rating.average_rating >= ${minRating}) `
         }
         else if (maxRating != null) {
-            query += `AND (title.t_const = rating.t_const) AND (rating.average_rating <= ${maxRating})`
+            query += `AND (title.t_const = rating.t_const) AND (rating.average_rating <= ${maxRating}) `
         }
 
         if (genres != null) {
@@ -182,7 +180,7 @@ SELECT * FROM title, rating
             }
         }
 
-        query += `)
+        query += `
 LIMIT ${itemsPerPage} OFFSET ${(page - 1) * itemsPerPage};`;
 
         console.log(query);

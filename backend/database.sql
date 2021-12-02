@@ -16,7 +16,7 @@ CREATE TABLE title(
 );
 
 CREATE TABLE rating(
-    t_const varchar(50) REFERENCES title(t_const),
+    t_const varchar(50) REFERENCES title(t_const) ON DELETE CASCADE,
     average_rating decimal,
     num_votes integer
 );
@@ -30,6 +30,7 @@ CREATE TABLE person(
     known_for_titles varchar(50)[]
 );
 
+-- This doesn't work
 -- CREATE TABLE crew(
 --     t_const varchar(50) REFERENCES title(t_const),
 --     directors n_const[] ELEMENT REFERENCES person(n_const),
@@ -37,18 +38,18 @@ CREATE TABLE person(
 -- );
 
 CREATE TABLE title_directors(
-    t_const varchar(50) REFERENCES title(t_const),
-    n_const varchar(50) REFERENCES person(n_const)
+    t_const varchar(50) REFERENCES title(t_const) ON DELETE CASCADE,
+    n_const varchar(50) REFERENCES person(n_const) ON DELETE CASCADE
 );
 
 CREATE TABLE title_writers(
-    t_const varchar(50) REFERENCES title(t_const),
-    n_const varchar(50) REFERENCES person(n_const)
+    t_const varchar(50) REFERENCES title(t_const) ON DELETE CASCADE,
+    n_const varchar(50) REFERENCES person(n_const) ON DELETE CASCADE
 );
 
 CREATE TABLE title_cast(
-    t_const varchar(50) REFERENCES title(t_const),
-    n_const varchar(50) REFERENCES person(n_const),
+    t_const varchar(50) REFERENCES title(t_const) ON DELETE CASCADE,
+    n_const varchar(50) REFERENCES person(n_const) ON DELETE CASCADE,
     ordering integer,
     category varchar(50),
     job varchar(50),
@@ -57,7 +58,7 @@ CREATE TABLE title_cast(
 
 CREATE TABLE episode(
     t_const varchar(50) PRIMARY KEY,
-    parent_t_const varchar(50) REFERENCES title(t_const),
+    parent_t_const varchar(50) REFERENCES title(t_const) ON DELETE CASCADE,
     season_number integer,
     episode_number integer
 );
