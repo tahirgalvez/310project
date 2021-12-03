@@ -128,9 +128,11 @@ DELETE FROM title
      * @param {string|string[]} genres string|string[] - Genres of the media. Uses AND for all types.
      * @param {number} page number - Page of UI to display. Assumes pages starts at 1.
      * @param {number} itemsPerPage number - Amount of items per page.
+     * @param {string|string[]} orderBy string|string[] - Columns in title to order by. (title.t_const, title.title_type, title.primary_title, title.original_title, title.is_adult, title.start_year, title.end_year, title.runtime_minutes, title.genres, rating.average_rating, and/or rating.num_votes)
+     * @param {boolean} ascending boolean - If orderBy was specified, choose for it to be ascending or descending.
      * @returns {string} string - SQL query command to search for media in the title table.
      */
-    advancedSearchTitle(title=null, titleType=null, isAdult=null, minYear=null, maxYear=null, minRunTimeMinutes=null, maxRunTimeMinutes=null, minRating=null, maxRating=null, genres=null, page=1, itemsPerPage=50) {
+    advancedSearchTitle(title=null, titleType=null, isAdult=null, minYear=null, maxYear=null, minRunTimeMinutes=null, maxRunTimeMinutes=null, minRating=null, maxRating=null, genres=null, page=1, itemsPerPage=50, orderBy=null, ascending=true) {
 
         if (title == null) {
             title = ''
@@ -192,6 +194,17 @@ FROM title LEFT JOIN rating on title.t_const = rating.t_const
             }
             else {
                 query += `AND ('${genres}' = ANY(title.genres)) `;
+            }
+        }
+
+        if (orderBy != null) {
+            if (ascending) {
+                query += `
+ORDER BY ${arrayToString(orderBy)} ASC `;
+            }
+            else {
+                query += `
+ORDER BY ${arrayToString(orderBy)} DESC `;
             }
         }
 
@@ -366,9 +379,11 @@ DELETE FROM person
      * @param {string|string[]} professions string|string[] - Professions to filter for. This is an AND filter.
      * @param {number} page number - Page of UI to display. Assumes pages starts at 1.
      * @param {number} itemsPerPage number - Amount of items per page.
+     * @param {string|string[]} orderBy string|string[] - Columns in title to order by. (person.n_const, person.name, person.birth_year, person.death_year, person.primary_professions, and/or person.known_for_titles)
+     * @param {boolean} ascending boolean - If orderBy was specified, choose for it to be ascending or descending.
      * @returns string - SQL query command to search for people in the person table.
      */
-    advancedSearchPerson(name=null, minBirthYear=null, maxBirthYear=null, minDeathYear=null, maxDeathYear=null, professions=null, page=1, itemsPerPage=50) {
+    advancedSearchPerson(name=null, minBirthYear=null, maxBirthYear=null, minDeathYear=null, maxDeathYear=null, professions=null, page=1, itemsPerPage=50, orderBy=null, ascending=true) {
         
         if (name == null) {
             name = '';
@@ -407,6 +422,17 @@ FROM person
             }
             else {
                 query += `AND ('${professions}' = ANY(person.primary_professions)) `;
+            }
+        }
+
+        if (orderBy != null) {
+            if (ascending) {
+                query += `
+ORDER BY ${arrayToString(orderBy)} ASC `;
+            }
+            else {
+                query += `
+ORDER BY ${arrayToString(orderBy)} DESC `;
             }
         }
 
