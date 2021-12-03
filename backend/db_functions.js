@@ -336,6 +336,15 @@ SET n_const = '${nconst}',
         console.log(query);
         return query;
     }
+
+    deletePerson(nconst) {
+        var query = `
+DELETE FROM person
+    WHERE person.n_const = '${nconst}'`;
+
+        console.log(query);
+        return query;
+    }
 }
 
 module.exports = dbf;
