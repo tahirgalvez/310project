@@ -1,4 +1,30 @@
+const { query } = require("express");
+
 console.log("db_functions.js loading");
+
+/**
+ * Creates a single string from an array suitable for usage with SQL queries.
+ * @param {string[]} array - An array of Strings.
+ * @returns string - A single string containing elements of the array comma seperated.
+ */
+function arrayToString(array) {
+    var string = "";
+    if (Array.isArray(array)) {
+        for (let i = 0; i < array.length; i++) {
+            if (i != array.length - 1) {
+                string += `"${array[i]}", `;
+            }
+            else {
+                string += `"${array[i]}"`;
+            }
+        }
+    }
+    else {
+        string += array;
+    }
+
+    return string;
+}
 
 const dbf = class DBFunctions{
     // Title Queries
@@ -19,15 +45,8 @@ const dbf = class DBFunctions{
     insertTitle(tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runTimeMinutes, genres) {
         var query = `
 INSERT INTO title(t_const, title_type, primary_title, original_title, is_adult, start_year, end_year, runtime_minutes, genres)
-    VALUES ('${tconst}', '${titleType}', '${primaryTitle}', '${originalTitle}', '${isAdult}', '${startYear}', '${endYear}', ${runTimeMinutes}, '{`;
-        for (let i = 0; i < genres.length; i++) {
-            if (i != genres.length - 1) {
-                query += `"${genres[i]}",`;
-            } else {
-                query += `"${genres[i]}"}');`;
-            }
-        }
-
+    VALUES ('${tconst}', '${titleType}', '${primaryTitle}', '${originalTitle}', '${isAdult}', '${startYear}', '${endYear}', ${runTimeMinutes}, '{ ${arrayToString(genres)} }')`;
+        
         console.log(query);
         return query;
     }
@@ -40,7 +59,7 @@ INSERT INTO title(t_const, title_type, primary_title, original_title, is_adult, 
     getTitle(tconst) {
         var query = `
 SELECT * FROM title 
-    WHERE (title.t_const = ${tconst});`;
+    WHERE (title.t_const = '${tconst}'');`;
 
         console.log(query);
         return query;
@@ -70,15 +89,7 @@ SET t_const = '${tconst}',
     start_year = ${startYear},
     end_year = ${endYear},
     runtime_minutes = ${runTimeMinutes},
-    genres = '{`;
-        for (let i = 0; i < genres.length; i++) {
-            if (i != genres.length - 1) {
-                query += `"${genres[i]}", `;
-            } else {
-                query += `"${genres[i]}"}'`;
-            }
-        }
-        query += `
+    genres = '{ ${arrayToString(genres)} }'
 WHERE title.t_const = '${tconst}';`;
 
         console.log(query);
@@ -86,7 +97,10 @@ WHERE title.t_const = '${tconst}';`;
     }
 
     /**
-     * Delete a media from the title table given its t_const.
+     * Delete a media from the title table given its t_const. The title table is
+     * depended on by many other tables (rating, person, title_directors, title_writers,
+     * title_cast, and episode). Deleting an entry from the title table will also delete
+     * entries from other tables.
      * @param {string} tconst string - Primary key to the title table.
      * @returns {string} string - SQL query command to delete a media from the title table.
      */
@@ -101,7 +115,7 @@ DELETE FROM title
 
     // Advanced Search
     /**
-     * Advanced Search. Use only relevant parameters, the rest can be set to null.
+     * Advanced Search for titles. Use only relevant parameters, the rest should be set to null.
      * @param {string} title string - Title of the media.
      * @param {string} titleType string|string[] - Types of media. Uses AND for all types.
      * @param {boolean} isAdult boolean - If the media is for adults. null represents both.
@@ -114,9 +128,11 @@ DELETE FROM title
      * @param {string|string[]} genres string|string[] - Genres of the media. Uses AND for all types.
      * @param {number} page number - Page of UI to display. Assumes pages starts at 1.
      * @param {number} itemsPerPage number - Amount of items per page.
+     * @param {string|string[]} orderBy string|string[] - Columns in title to order by. (title.t_const, title.title_type, title.primary_title, title.original_title, title.is_adult, title.start_year, title.end_year, title.runtime_minutes, title.genres, rating.average_rating, and/or rating.num_votes)
+     * @param {boolean} ascending boolean - If orderBy was specified, choose for it to be ascending or descending.
      * @returns {string} string - SQL query command to search for media in the title table.
      */
-    searchTitle(title=null, titleType=null, isAdult=null, minYear=null, maxYear=null, minRunTimeMinutes=null, maxRunTimeMinutes=null, minRating=null, maxRating=null, genres=null, page=1, itemsPerPage=50) {
+    advancedSearchTitle(title=null, titleType=null, isAdult=null, minYear=null, maxYear=null, minRunTimeMinutes=null, maxRunTimeMinutes=null, minRating=null, maxRating=null, genres=null, page=1, itemsPerPage=50, orderBy=null, ascending=true) {
 
         if (title == null) {
             title = ''
@@ -125,7 +141,7 @@ DELETE FROM title
         var query = `
 SELECT title.t_const, title.title_type, title.primary_title, title.original_title, title.is_adult, title.start_year, title.end_year, title.runtime_minutes, title.genres, rating.average_rating, rating.num_votes 
 FROM title LEFT JOIN rating on title.t_const = rating.t_const
-    WHERE (title.primary_title LIKE \'%${title}%\' OR title.original_title LIKE \'%${title}%\') `;
+    WHERE (title.primary_title LIKE '%${title}%' OR title.original_title LIKE '%${title}%') `;
 
         if (titleType != null) {
             query += `AND ('${titleType}' = title.title_type) `;
@@ -178,6 +194,17 @@ FROM title LEFT JOIN rating on title.t_const = rating.t_const
             }
             else {
                 query += `AND ('${genres}' = ANY(title.genres)) `;
+            }
+        }
+
+        if (orderBy != null) {
+            if (ascending) {
+                query += `
+ORDER BY ${arrayToString(orderBy)} ASC `;
+            }
+            else {
+                query += `
+ORDER BY ${arrayToString(orderBy)} DESC `;
             }
         }
 
@@ -262,6 +289,155 @@ WHERE (rating.t_const = '${tconst}');`;
         var query = `
 DELETE FROM rating
     WHERE (rating.t_const = '${tconst}');`;
+
+        console.log(query);
+        return query;
+    }
+
+    // Person Queries
+    // Basic CRUD for the person table
+    /**
+     * Inserts a person into the person table.
+     * @param {string} nconst string - Primary key to the person table.
+     * @param {string} primaryName string - Name by which the person is most often credited.
+     * @param {number} birthYear number - In YYYY format.
+     * @param {number} deathYear number - In YYYY format if applicable.
+     * @param {string|string[]} primaryProfessions string|string[] - The top 3 professions of the person.
+     * @param {string|string[]} knownForTitles string|string[] - (tconst) titles the person is known for.
+     * @returns string - SQL query command to insert a person into the person table.
+     */
+    insertPerson(nconst, primaryName, birthYear, deathYear, primaryProfessions, knownForTitles) {
+        var query = `
+INSERT INTO person(n_const, primary_name, birth_year, death_year, primary_profession, known_for_titles)
+    VALUES('${nconst}', '${primaryName}', ${birthYear}, ${deathYear}, '{ ${arrayToString(primaryProfessions)} }', '{ ${arrayToString(knownForTitles)} }');`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Gets a person from the person table.
+     * @param {string} nconst string - Primary key to the person table.
+     * @returns string - SQL query command to get a person from the person table.
+     */
+    getPerson(nconst) {
+        var query = `
+SELECT * FROM person
+    WHERE (person.n_const = '${nconst}'');`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Update a person from the person table.
+     * @param {string} nconst string - Primary key to the person table.
+     * @param {string} primaryName string - Name by which the person is most often credited.
+     * @param {number} birthYear number - In YYYY format.
+     * @param {number} deathYear number - In YYYY formate if applicable.
+     * @param {string|string[]} primaryProfessions string|string[] - The top 3 professions of the person.
+     * @param {string|string[]} knownForTitles string|string[] - (tconst) titles the person is known for.
+     * @returns string - SQL query command to update a person from the person table.
+     */
+    updatePerson(nconst, primaryName, birthYear, deathYear, primaryProfessions, knownForTitles) {
+        var query = `
+UPDATE person
+SET n_const = '${nconst}',
+    primary_name = '${primaryName}',
+    birth_year = '${birthYear}',
+    death_year = '${deathYear}',
+    primary_professions = '{ ${primaryProfessions} }',
+    known_for_titles = '{ ${knownForTitles} }'`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Deletes a person from the person table. The person table is 
+     * depended on by many other tables (title_directors, title_writers, and title_cast).
+     * Deleting an entry from the person table will also delete entries from other tables.
+     * @param {string} nconst string - Primary key to the person table.
+     * @returns string - SQL query command to delete a person from the person table.
+     */
+    deletePerson(nconst) {
+        var query = `
+DELETE FROM person
+    WHERE person.n_const = '${nconst}'`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Advanced Search for person. Use only relevant parameters, the rest should be set to null.
+     * @param {string} name string - Name by which the person is most often credited.
+     * @param {number} minBirthYear number - In YYYY format. The minimum birth year to filter for.
+     * @param {number} maxBirthYear number - In YYYY format. The maximum birth year to filter for.
+     * @param {number} minDeathYear number - In YYYY format. The minimum death year to filter for.
+     * @param {number} maxDeathYear number - In YYYY format. The maximum death year to filter for.
+     * @param {string|string[]} professions string|string[] - Professions to filter for. This is an AND filter.
+     * @param {number} page number - Page of UI to display. Assumes pages starts at 1.
+     * @param {number} itemsPerPage number - Amount of items per page.
+     * @param {string|string[]} orderBy string|string[] - Columns in title to order by. (person.n_const, person.name, person.birth_year, person.death_year, person.primary_professions, and/or person.known_for_titles)
+     * @param {boolean} ascending boolean - If orderBy was specified, choose for it to be ascending or descending.
+     * @returns string - SQL query command to search for people in the person table.
+     */
+    advancedSearchPerson(name=null, minBirthYear=null, maxBirthYear=null, minDeathYear=null, maxDeathYear=null, professions=null, page=1, itemsPerPage=50, orderBy=null, ascending=true) {
+        
+        if (name == null) {
+            name = '';
+        }
+        
+        var query = `
+SELECT person.n_const, person.name, person.birth_year, person.death_year, person.primary_professions, person.known_for_titles
+FROM person
+    WHERE (person.primary_name LIKE '%${name}%') `;
+
+        if (minBirthYear != null && maxBirthYear != null) {
+            query += `AND (person.birth_year >= ${minBirthYear} AND person.birth_year <= ${maxBirthYear}) `
+        }
+        else if (minBirthYear != null) {
+            query += `AND (person.birth_year >= ${minBirthYear}) `
+        }
+        else if (maxBirthYear != null) {
+            query += `AND (person.birth_year <= ${maxBirthYear}) `
+        }
+
+        if (minDeathYear != null && maxDeathYear != null) {
+            query += `AND (person.death_year >= ${minDeathYear} AND person.death_year <= ${maxDeathYear}) `
+        }
+        else if (minDeathYear != null) {
+            query += `AND (person.death_year >= ${minDeathYear}) `
+        }
+        else if (maxDeathYear != null) {
+            query += `AND (person.death_year <= ${maxDeathYear}) `
+        }
+
+        if (professions != null) {
+            if (Array.isArray(professions)) {
+                professions.forEach(profession => {
+                    query += `AND ('${profession}' = ANY(person.primary_professions)) `;
+                });
+            }
+            else {
+                query += `AND ('${professions}' = ANY(person.primary_professions)) `;
+            }
+        }
+
+        if (orderBy != null) {
+            if (ascending) {
+                query += `
+ORDER BY ${arrayToString(orderBy)} ASC `;
+            }
+            else {
+                query += `
+ORDER BY ${arrayToString(orderBy)} DESC `;
+            }
+        }
+
+        query += `
+LIMIT LIMIT ${itemsPerPage} OFFSET ${(page - 1) * itemsPerPage};`;
 
         console.log(query);
         return query;
