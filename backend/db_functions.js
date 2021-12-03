@@ -115,7 +115,7 @@ DELETE FROM title
 
     // Advanced Search
     /**
-     * Advanced Search. Use only relevant parameters, the rest can be set to null.
+     * Advanced Search for titles. Use only relevant parameters, the rest should be set to null.
      * @param {string} title string - Title of the media.
      * @param {string} titleType string|string[] - Types of media. Uses AND for all types.
      * @param {boolean} isAdult boolean - If the media is for adults. null represents both.
@@ -139,7 +139,7 @@ DELETE FROM title
         var query = `
 SELECT title.t_const, title.title_type, title.primary_title, title.original_title, title.is_adult, title.start_year, title.end_year, title.runtime_minutes, title.genres, rating.average_rating, rating.num_votes 
 FROM title LEFT JOIN rating on title.t_const = rating.t_const
-    WHERE (title.primary_title LIKE \'%${title}%\' OR title.original_title LIKE \'%${title}%\') `;
+    WHERE (title.primary_title LIKE '%${title}%' OR title.original_title LIKE '%${title}%') `;
 
         if (titleType != null) {
             query += `AND ('${titleType}' = title.title_type) `;
@@ -288,7 +288,7 @@ DELETE FROM rating
      * @param {string} nconst string - Primary key to the person table.
      * @param {string} primaryName string - Name by which the person is most often credited.
      * @param {number} birthYear number - In YYYY format.
-     * @param {number} deathYear number - In YYYY formate if applicable.
+     * @param {number} deathYear number - In YYYY format if applicable.
      * @param {string|string[]} primaryProfessions string|string[] - The top 3 professions of the person.
      * @param {string|string[]} knownForTitles string|string[] - (tconst) titles the person is known for.
      * @returns string - SQL query command to insert a person into the person table.
@@ -333,8 +333,8 @@ SET n_const = '${nconst}',
     primary_name = '${primaryName}',
     birth_year = '${birthYear}',
     death_year = '${deathYear}',
-    primaryProfessions = '{ ${primaryProfessions} }',
-    knownForTitles = '{ ${knownForTitles} }'`;
+    primary_professions = '{ ${primaryProfessions} }',
+    known_for_titles = '{ ${knownForTitles} }'`;
 
         console.log(query);
         return query;
@@ -351,6 +351,67 @@ SET n_const = '${nconst}',
         var query = `
 DELETE FROM person
     WHERE person.n_const = '${nconst}'`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Advanced Search for person. Use only relevant parameters, the rest should be set to null.
+     * @param {string} name string - Name by which the person is most often credited.
+     * @param {number} minBirthYear number - In YYYY format. The minimum birth year to filter for.
+     * @param {number} maxBirthYear number - In YYYY format. The maximum birth year to filter for.
+     * @param {number} minDeathYear number - In YYYY format. The minimum death year to filter for.
+     * @param {number} maxDeathYear number - In YYYY format. The maximum death year to filter for.
+     * @param {string|string[]} professions string|string[] - Professions to filter for. This is an AND filter.
+     * @param {number} page number - Page of UI to display. Assumes pages starts at 1.
+     * @param {number} itemsPerPage number - Amount of items per page.
+     * @returns string - SQL query command to search for people in the person table.
+     */
+    advancedSearchPerson(name=null, minBirthYear=null, maxBirthYear=null, minDeathYear=null, maxDeathYear=null, professions=null, page=1, itemsPerPage=50) {
+        
+        if (name == null) {
+            name = '';
+        }
+        
+        var query = `
+SELECT person.n_const, person.name, person.birth_year, person.death_year, person.primary_professions, person.known_for_titles
+FROM person
+    WHERE (person.primary_name LIKE '%${name}%') `;
+
+        if (minBirthYear != null && maxBirthYear != null) {
+            query += `AND (person.birth_year >= ${minBirthYear} AND person.birth_year <= ${maxBirthYear}) `
+        }
+        else if (minBirthYear != null) {
+            query += `AND (person.birth_year >= ${minBirthYear}) `
+        }
+        else if (maxBirthYear != null) {
+            query += `AND (person.birth_year <= ${maxBirthYear}) `
+        }
+
+        if (minDeathYear != null && maxDeathYear != null) {
+            query += `AND (person.death_year >= ${minDeathYear} AND person.death_year <= ${maxDeathYear}) `
+        }
+        else if (minDeathYear != null) {
+            query += `AND (person.death_year >= ${minDeathYear}) `
+        }
+        else if (maxDeathYear != null) {
+            query += `AND (person.death_year <= ${maxDeathYear}) `
+        }
+
+        if (professions != null) {
+            if (Array.isArray(professions)) {
+                professions.forEach(profession => {
+                    query += `AND ('${profession}' = ANY(person.primary_professions)) `;
+                });
+            }
+            else {
+                query += `AND ('${professions}' = ANY(person.primary_professions)) `;
+            }
+        }
+
+        query += `
+LIMIT LIMIT ${itemsPerPage} OFFSET ${(page - 1) * itemsPerPage};`;
 
         console.log(query);
         return query;
