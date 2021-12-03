@@ -215,15 +215,69 @@ LIMIT ${itemsPerPage} OFFSET ${(page - 1) * itemsPerPage};`;
         return query;
     }
 
+    // Episode Queries
+    // Basic CRUD for episodes
+    /**
+     * Inserts an episode into the episode table.
+     * @param {string} tconst string - Primary key to the episode table.
+     * @param {string} parentTConst string - Foreign key referencing tconsts in the title table.
+     * @param {number} seasonNumber number - The season this episode is associated with.
+     * @param {number} episodeNumber number - The episode number of this season.
+     * @returns {string} string - SQL query command to insert a episode into the episode table.
+     */
+    insertEpisode(tconst, parentTConst, seasonNumber, episodeNumber) {
+        var query = `
+INSERT INTO episode(t_const, parent_t_const, season_number, episode_number)
+    VALUES('${tconst}', '${parentTConst}', ${seasonNumber}, ${episodeNumber});`;
+
+        console.log(query);
+        return query;
+    }
+
     /**
      * Retrieve episodes from a specific media
      * @param {string} tconst string - Primary key to the title table.
      * @returns {string} string - SQL query command to search for all episodes of a tv show.
      */
-    getEpisodes(tconst) {
+    getEpisode(tconst) {
         var query = `
 SELECT * FROM episode
     WHERE (episode.parent_t_const = '${tconst}');`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Updates an episode from the episode table.
+     * @param {string} tconst string - Primary key to the episode table.
+     * @param {string} parentTConst string - Foreign key referencing tconsts in the title table.
+     * @param {number} seasonNumber number - The season this episode is associated with.
+     * @param {number} episodeNumber number - The episode number of this season.
+     * @returns {string} string - SQL query command to update an episode from the episode table.
+     */
+    updateEpisode(tconst, parentTConst, seasonNumber, episodeNumber) {
+        var query = `
+UPDATE episode
+SET t_const = '${tconst}',
+    parent_t_const = '${parentTConst}',
+    season_number = ${seasonNumber},
+    episode_number = ${episodeNumber}
+WHERE episode.t_const = '${tconst}';`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Deletes and episode from the episode table.
+     * @param {string} tconst string - Primary key to the episode table.
+     * @returns string - SQL query command to delete an episode from the episode table.
+     */
+    deleteEpisode(tconst) {
+        var query = `
+DELETE FROM episode
+    WHERE episode.t_const = '${tconst}';`;
 
         console.log(query);
         return query;
@@ -442,6 +496,97 @@ LIMIT LIMIT ${itemsPerPage} OFFSET ${(page - 1) * itemsPerPage};`;
         console.log(query);
         return query;
     }
+
+    // Cast Queries
+    // Basic CRUD for the title_cast table
+    /**
+     * Inserts a title and person into the title_cast relationship table.
+     * @param {string} tconst string - Foreign key referencing a title in the title table.
+     * @param {string} nconst string - Foreign key referencing a person in the person table.
+     * @param {number} ordering number - A number to uniquely identify rows for a given titleId (this is the description given in the imdb dataset).
+     * @param {string} category string - The category of job this person was in.
+     * @param {string} job string - The specific job title if applicable.
+     * @param {string} characters string - The name of the character played if applicable.
+     * @returns {string} string - SQL query command to insert a title and person into the title_cast relationship table.
+     */
+    insertTitleCast(tconst, nconst, ordering, category, job, characters) {
+        var query = `
+INSERT INTO title_cast(t_const, n_const, ordering, category, job, characters)
+    VALUES('${tconst}', '${nconst}', ${ordering}, '${category}', '${job}', '${characters}');`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Gets the cast of a title from the title_cast table.
+     * @param {string} tconst string - Foreign key referencing a title in the title table.
+     * @returns {string} string - SQL query command to get the cast from the title_cast table based on a title's tconst.
+     */
+    getTitleCastWithTitle(tconst) {
+        var query = `
+SELECT * FROM title_cast
+    WHERE (title_cast.t_const = '${tconst}');`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Gets titles a person is associated with from the title_cast table.
+     * @param {string} nconst string - Foreign key referencing a person in the person table.
+     * @returns {string} string - SQL query command to get the titles from the title_cast table based on a person's nconst.
+     */
+    getTitleCastWithPerson(nconst) {
+        var query = `
+SELECT * FROM title_cast
+    WHERE (title_cast.n_const = '${nconst}');`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Updates a person from a title in the title_cast table.
+     * @param {string} tconst string - Foreign key referencing a title in the title table.
+     * @param {string} nconst string - Foreign key referencing a person in the person table.
+     * @param {number} ordering number - A number to uniquely identify rows for a given titleId (this is the description given in the imdb dataset).
+     * @param {string} category string - The category of job this person was in.
+     * @param {string} job string - The specific job title if applicable.
+     * @param {string} characters string - The name of the character played if applicable.
+     * @returns {string} string - SQL query command to update a person from a title in the title_cast table.
+     */
+    updateTitleCast(tconst, nconst, ordering, category, job, characters) {
+        var query = `
+UPDATE title_cast
+SET t_const = '${tconst}',
+    n_const = '${nconst}',
+    ordering = ${ordering},
+    category = '${category}',
+    job = '${job}',
+    characters = '${characters}'
+WHERE (title_cast.t_const = '${tconst}' AND title_cast.n_const = '${nconst}');`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Deletes a title and cast relationship from the title_cast table.
+     * @param {string} tconst string - Foreign key referencing a title in the title table.
+     * @param {string} nconst string - Foreign key referencing a person in the person table.
+     * @returns {string} string - SQL query command to delete a title and cast relationship from the title_cast table.
+     */
+    deleteTitleCast(tconst, nconst) {
+        var query = `
+DELETE FROM title_cast
+    WHERE (title_cast.t_const = '${tconst}' AND title_cast.n_const = '${nconst}');`;
+
+        console.log(query);
+        return query;
+    }
+
+
 }
 
 module.exports = dbf;
