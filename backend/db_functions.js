@@ -1,4 +1,30 @@
+const { query } = require("express");
+
 console.log("db_functions.js loading");
+
+/**
+ * Creates a single string from an array suitable for usage with SQL queries.
+ * @param {string[]} array - An array of Strings.
+ * @returns string - A single string containing elements of the array comma seperated.
+ */
+function arrayToString(array) {
+    var string = "";
+    if (Array.isArray(array)) {
+        for (let i = 0; i < array.length; i++) {
+            if (i != array.length - 1) {
+                string += `"${array[i]}", `;
+            }
+            else {
+                string += `"${array[i]}"`;
+            }
+        }
+    }
+    else {
+        string += array;
+    }
+
+    return string;
+}
 
 const dbf = class DBFunctions{
     // Title Queries
@@ -19,15 +45,8 @@ const dbf = class DBFunctions{
     insertTitle(tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runTimeMinutes, genres) {
         var query = `
 INSERT INTO title(t_const, title_type, primary_title, original_title, is_adult, start_year, end_year, runtime_minutes, genres)
-    VALUES ('${tconst}', '${titleType}', '${primaryTitle}', '${originalTitle}', '${isAdult}', '${startYear}', '${endYear}', ${runTimeMinutes}, '{`;
-        for (let i = 0; i < genres.length; i++) {
-            if (i != genres.length - 1) {
-                query += `"${genres[i]}",`;
-            } else {
-                query += `"${genres[i]}"}');`;
-            }
-        }
-
+    VALUES ('${tconst}', '${titleType}', '${primaryTitle}', '${originalTitle}', '${isAdult}', '${startYear}', '${endYear}', ${runTimeMinutes}, '{ ${arrayToString(genres)} }')`;
+        
         console.log(query);
         return query;
     }
@@ -40,7 +59,7 @@ INSERT INTO title(t_const, title_type, primary_title, original_title, is_adult, 
     getTitle(tconst) {
         var query = `
 SELECT * FROM title 
-    WHERE (title.t_const = ${tconst});`;
+    WHERE (title.t_const = '${tconst}'');`;
 
         console.log(query);
         return query;
@@ -70,15 +89,7 @@ SET t_const = '${tconst}',
     start_year = ${startYear},
     end_year = ${endYear},
     runtime_minutes = ${runTimeMinutes},
-    genres = '{`;
-        for (let i = 0; i < genres.length; i++) {
-            if (i != genres.length - 1) {
-                query += `"${genres[i]}", `;
-            } else {
-                query += `"${genres[i]}"}'`;
-            }
-        }
-        query += `
+    genres = '{ ${arrayToString(genres)} }'
 WHERE title.t_const = '${tconst}';`;
 
         console.log(query);
@@ -262,6 +273,65 @@ WHERE (rating.t_const = '${tconst}');`;
         var query = `
 DELETE FROM rating
     WHERE (rating.t_const = '${tconst}');`;
+
+        console.log(query);
+        return query;
+    }
+
+    // Person Queries
+    // Basic CRUD for the person table
+    /**
+     * Inserts a person into the person table.
+     * @param {string} nconst string - Primary key to the person table.
+     * @param {string} primaryName string - Name by which the person is most often credited.
+     * @param {number} birthYear number - In YYYY format.
+     * @param {number} deathYear number - In YYYY formate if applicable.
+     * @param {string|string[]} primaryProfessions string|string[] - The top 3 professions of the person.
+     * @param {string|string[]} knownForTitles string|string[] - (tconst) titles the person is known for.
+     * @returns string - SQL query command to insert a person into the person table.
+     */
+    insertPerson(nconst, primaryName, birthYear, deathYear, primaryProfessions, knownForTitles) {
+        var query = `
+INSERT INTO person(n_const, primary_name, birth_year, death_year, primary_profession, known_for_titles)
+    VALUES('${nconst}', '${primaryName}', ${birthYear}, ${deathYear}, '{ ${arrayToString(primaryProfessions)} }', '{ ${arrayToString(knownForTitles)} }');`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Gets a person from the person table.
+     * @param {string} nconst string - Primary key to the person table.
+     * @returns string - SQL query command to get a person from the person table.
+     */
+    getPerson(nconst) {
+        var query = `
+SELECT * FROM person
+    WHERE (person.n_const = '${nconst}'');`;
+
+        console.log(query);
+        return query;
+    }
+
+    /**
+     * Update a person from the person table.
+     * @param {string} nconst string - Primary key to the person table.
+     * @param {string} primaryName string - Name by which the person is most often credited.
+     * @param {number} birthYear number - In YYYY format.
+     * @param {number} deathYear number - In YYYY formate if applicable.
+     * @param {string|string[]} primaryProfessions string|string[] - The top 3 professions of the person.
+     * @param {string|string[]} knownForTitles string|string[] - (tconst) titles the person is known for.
+     * @returns string - SQL query command to update a person from the person table.
+     */
+    updatePerson(nconst, primaryName, birthYear, deathYear, primaryProfessions, knownForTitles) {
+        var query = `
+UPDATE person
+SET n_const = '${nconst}',
+    primary_name = '${primaryName}',
+    birth_year = '${birthYear}',
+    death_year = '${deathYear}',
+    primaryProfessions = '{ ${primaryProfessions} }',
+    knownForTitles = '{ ${knownForTitles} }'`;
 
         console.log(query);
         return query;
