@@ -30,23 +30,6 @@ CREATE TABLE person(
     known_for_titles varchar(50)[]
 );
 
--- This doesn't work
--- CREATE TABLE crew(
---     t_const varchar(50) REFERENCES title(t_const),
---     directors n_const[] ELEMENT REFERENCES person(n_const),
---     writers n_const[] ELEMENT REFERENCES person(n_const)
--- );
-
-CREATE TABLE title_directors(
-    t_const varchar(50) REFERENCES title(t_const) ON DELETE CASCADE,
-    n_const varchar(50) REFERENCES person(n_const) ON DELETE CASCADE
-);
-
-CREATE TABLE title_writers(
-    t_const varchar(50) REFERENCES title(t_const) ON DELETE CASCADE,
-    n_const varchar(50) REFERENCES person(n_const) ON DELETE CASCADE
-);
-
 CREATE TABLE title_cast(
     t_const varchar(50) REFERENCES title(t_const) ON DELETE CASCADE,
     n_const varchar(50) REFERENCES person(n_const) ON DELETE CASCADE,
