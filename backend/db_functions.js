@@ -97,7 +97,10 @@ WHERE title.t_const = '${tconst}';`;
     }
 
     /**
-     * Delete a media from the title table given its t_const.
+     * Delete a media from the title table given its t_const. The title table is
+     * depended on by many other tables (rating, person, title_directors, title_writers,
+     * title_cast, and episode). Deleting an entry from the title table will also delete
+     * entries from other tables.
      * @param {string} tconst string - Primary key to the title table.
      * @returns {string} string - SQL query command to delete a media from the title table.
      */
@@ -127,7 +130,7 @@ DELETE FROM title
      * @param {number} itemsPerPage number - Amount of items per page.
      * @returns {string} string - SQL query command to search for media in the title table.
      */
-    searchTitle(title=null, titleType=null, isAdult=null, minYear=null, maxYear=null, minRunTimeMinutes=null, maxRunTimeMinutes=null, minRating=null, maxRating=null, genres=null, page=1, itemsPerPage=50) {
+    advancedSearchTitle(title=null, titleType=null, isAdult=null, minYear=null, maxYear=null, minRunTimeMinutes=null, maxRunTimeMinutes=null, minRating=null, maxRating=null, genres=null, page=1, itemsPerPage=50) {
 
         if (title == null) {
             title = ''
@@ -337,6 +340,13 @@ SET n_const = '${nconst}',
         return query;
     }
 
+    /**
+     * Deletes a person from the person table. The person table is 
+     * depended on by many other tables (title_directors, title_writers, and title_cast).
+     * Deleting an entry from the person table will also delete entries from other tables.
+     * @param {string} nconst string - Primary key to the person table.
+     * @returns string - SQL query command to delete a person from the person table.
+     */
     deletePerson(nconst) {
         var query = `
 DELETE FROM person
