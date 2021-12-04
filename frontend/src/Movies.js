@@ -10,45 +10,18 @@ import { Button } from "react-bootstrap";
 const columns = [
   {
     title: "Title",
-    dataIndex: "title",
-    key: "title",
+    dataIndex: "primary_title",
+    key: "primary_title",
   },
   {
-    title: "Director",
-    dataIndex: "director",
-    key: "director",
+    title: "Genre",
+    dataIndex: "genres",
+    key: "genres",
   },
   {
     title: "Year",
-    dataIndex: "year",
-    key: "year",
-  },
-];
-
-const data = [
-  {
-    key: "1",
-    title: "Harry Potter",
-    director: "Tahir",
-    year: "2000",
-  },
-  {
-    key: "2",
-    title: "Harry Potter 2",
-    director: "Jay",
-    year: "2001",
-  },
-  {
-    key: "3",
-    title: "Harry Potter 3",
-    director: "Tahir",
-    year: "2002",
-  },
-  {
-    key: "4",
-    title: "Jaws",
-    director: "Spielberg",
-    year: "1975",
+    dataIndex: "end_year",
+    key: "end_year",
   },
 ];
 
@@ -65,20 +38,20 @@ class Movies extends React.Component {
       visible: false,
       selectedMovie: null,
       searchValue: "",
-      movieData: data,
+      movieData: [],
     };
   }
 
   setRowKey(record) {
     const selectedRowKey = getRowKey(record);
-    console.log(record);
-    console.log(selectedRowKey, typeof selectedRowKey);
+    //console.log(record);
+    //console.log(selectedRowKey, typeof selectedRowKey);
     this.setState({ selectedRowKey });
     this.setState({ record });
   }
 
   handleOk = (e) => {
-    console.log(e);
+    //console.log(e);
     this.setState({
       visible: false,
     });
@@ -91,16 +64,25 @@ class Movies extends React.Component {
     });
   };
 
-  searchMovies(e) {
-    let newMovies = data.filter((movie) => {
-      return movie.title.toLowerCase().indexOf(this.state.searchValue.toLowerCase()) >= 0;
-    });
-    this.setState({ movieData: newMovies });
+  async searchMovies(e) {
+    // let newMovies = data.filter((movie) => {
+    //   return movie.title.toLowerCase().indexOf(this.state.searchValue.toLowerCase()) >= 0;
+    // });
+
+    try{
+      const resp =  await fetch(`/titles?title=${this.state.searchValue}`)
+      const data = await resp.json()
+      //console.log(data)
+      this.setState({ movieData: data })
+      //console.log(this.state.movieData)
+    }catch(err){
+      console.log(err)
+    }
   }
 
   render() {
     const { selectedRowKey } = this.state;
-    console.log(selectedRowKey, typeof selectedRowKey);
+    //console.log(selectedRowKey, typeof selectedRowKey);
 
     return (
       <Container align="center">
@@ -145,14 +127,14 @@ class Movies extends React.Component {
           />
           {this.state.visible && (
             <Modal
-              title={this.state.selectedMovie.title}
+              title={this.state.selectedMovie.primary_title}
               visible={this.state.visible}
               onOk={this.handleOk}
               onCancel={this.handleCancel}
             >
-              <p>Title: {this.state.selectedMovie.title}</p>
-              <p>Director: {this.state.selectedMovie.director}</p>
-              <p>Year: {this.state.selectedMovie.year}</p>
+              <p>Title: {this.state.selectedMovie.primary_title}</p>
+              <p>Genre: {this.state.selectedMovie.genres}</p>
+              <p>Year: {this.state.selectedMovie.end_year}</p>
             </Modal>
           )}
         </div>

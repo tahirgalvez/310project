@@ -17,11 +17,15 @@ app.get("/api", (req, res) => {
 });
 
 app.get("/titles", async (req, res) => {
+
+  var title = req.params.title;
+
   try{
-    pool.query(dbfunc.deleteTitle(2));
-    const response = await pool.query(dbfunc.insertTitle(2, 3, 4, 5, false, 7, 8, 9, [34, 3, 4]));
-    await pool.query(dbfunc.updateTitle(2, 4, 21312, 5, false, 7, 8, 9, [43, 3, 4]));
-    res.json(response);
+    pool.query(dbfunc.advancedSearchTitle(title, null, null, null, null, null, null, null, null, null, 1, 100, "title.t_const", true), function(err, result, fields) {
+      if (err) console.log(err.message);
+      res.json(result.rows); // Sends result to browser
+      console.log(JSON.stringify(result.rows, null, 2));
+    });
   }
   catch (err) {
     console.error(err.message);

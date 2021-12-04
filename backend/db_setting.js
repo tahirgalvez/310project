@@ -2,11 +2,20 @@ console.log("dbrgra.js running");
 
 const Pool = require("pg").Pool;
 
-//daniel's local database
+// daniel's local database
 // const pool = new Pool({
 //     user: "postgres",
 //     password: "password",
 //     database: "csce310project",
+//     host: "localhost",
+//     port: "5432"
+// });
+
+// tahir's local database
+// const pool = new Pool({
+//     user: "postgres",
+//     password: "postgres",
+//     database: "postgres",
 //     host: "localhost",
 //     port: "5432"
 // });
