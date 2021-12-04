@@ -18,7 +18,7 @@ app.get("/api", (req, res) => {
 
 app.get("/titles", async (req, res) => {
 
-  var title = req.params.title;
+  var title = req.query.title;
 
   try{
     pool.query(dbfunc.advancedSearchTitle(title, null, null, null, null, null, null, null, null, null, 1, 100, "title.t_const", true), function(err, result, fields) {
