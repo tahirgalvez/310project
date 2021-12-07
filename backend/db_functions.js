@@ -444,7 +444,7 @@ DELETE FROM person
         }
         
         var query = `
-SELECT person.n_const, person.name, person.birth_year, person.death_year, person.primary_professions, person.known_for_titles
+SELECT person.n_const, person.primary_name, person.birth_year, person.death_year, person.primary_profession, person.known_for_titles
 FROM person
     WHERE (person.primary_name LIKE '%${name}%') `;
 
@@ -491,7 +491,7 @@ ORDER BY ${arrayToString(orderBy)} DESC `;
         }
 
         query += `
-LIMIT LIMIT ${itemsPerPage} OFFSET ${(page - 1) * itemsPerPage};`;
+LIMIT ${itemsPerPage} OFFSET ${(page - 1) * itemsPerPage};`;
 
         console.log(query);
         return query;

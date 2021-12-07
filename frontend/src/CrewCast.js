@@ -10,18 +10,18 @@ import { Button } from "react-bootstrap";
 const columns = [
   {
     title: "Name",
-    dataIndex: "name",
-    key: "name",
+    dataIndex: "primary_name",
+    key: "primary_name",
   },
   {
     title: "Primary Profession",
-    dataIndex: "profession",
-    key: "profession",
+    dataIndex: "primary_profession",
+    key: "primary_profession",
   },
   {
     title: "Birth Year",
-    dataIndex: "dob",
-    key: "dob",
+    dataIndex: "birth_year",
+    key: "birth_year",
   },
 ];
 
@@ -65,7 +65,7 @@ class CrewCast extends React.Component {
       visible: false,
       selectedPerson: null,
       searchValue: "",
-      personData: data,
+      personData: [],
     };
   }
 
@@ -91,11 +91,16 @@ class CrewCast extends React.Component {
     });
   };
 
-  searchCrewCast(e) {
-    let newCrewCast = data.filter((person) => {
-      return person.name.toLowerCase().indexOf(this.state.searchValue.toLowerCase()) >= 0;
-    });
-    this.setState({ personData: newCrewCast });
+ async searchCrewCast(e) {
+    try{
+      const resp =  await fetch(`/people?title=${this.state.searchValue}`)
+      const data = await resp.json()
+      //console.log(data)
+      this.setState({ personData: data })
+      //console.log(this.state.movieData)
+    }catch(err){
+      console.log(err)
+    }
   }
 
   render() {
@@ -145,14 +150,14 @@ class CrewCast extends React.Component {
           />
           {this.state.visible && (
             <Modal
-              title={this.state.selectedPerson.name}
+              title={this.state.selectedPerson.primary_name}
               visible={this.state.visible}
               onOk={this.handleOk}
               onCancel={this.handleCancel}
             >
-              <p>Name: {this.state.selectedPerson.name}</p>
-              <p>Primary Profession: {this.state.selectedPerson.profession}</p>
-              <p>Birth Year: {this.state.selectedPerson.dob}</p>
+              <p>Name: {this.state.selectedPerson.primary_name}</p>
+              <p>Primary Profession: {this.state.selectedPerson.primary_profession}</p>
+              <p>Birth Year: {this.state.selectedPerson.birth_year}</p>
             </Modal>
           )}
         </div>

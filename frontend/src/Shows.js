@@ -10,18 +10,18 @@ import { Button } from "react-bootstrap";
 const columns = [
   {
     title: "Title",
-    dataIndex: "title",
-    key: "title",
+    dataIndex: "primary_title",
+    key: "primary_title",
   },
   {
-    title: "Director",
-    dataIndex: "director",
-    key: "director",
+    title: "Genre",
+    dataIndex: "genres",
+    key: "genres",
   },
   {
     title: "Year",
-    dataIndex: "year",
-    key: "year",
+    dataIndex: "end_year",
+    key: "end_year",
   },
 ];
 
@@ -59,7 +59,7 @@ class Shows extends React.Component {
       visible: false,
       selectedShow: null,
       searchValue: "",
-      showData: data,
+      showData: [],
     };
   }
 
@@ -85,11 +85,20 @@ class Shows extends React.Component {
     });
   };
 
-  searchShows(e) {
-    let newShows = data.filter((show) => {
-      return show.title.toLowerCase().indexOf(this.state.searchValue.toLowerCase()) >= 0;
-    });
-    this.setState({ showData: newShows });
+  async searchShows(e) {
+    // let newMovies = data.filter((movie) => {
+    //   return movie.title.toLowerCase().indexOf(this.state.searchValue.toLowerCase()) >= 0;
+    // });
+
+    try{
+      const resp =  await fetch(`/showss?title=${this.state.searchValue}`)
+      const data = await resp.json()
+      //console.log(data)
+      this.setState({ showData: data })
+      //console.log(this.state.movieData)
+    }catch(err){
+      console.log(err)
+    }
   }
 
   render() {
@@ -144,9 +153,9 @@ class Shows extends React.Component {
               onOk={this.handleOk}
               onCancel={this.handleCancel}
             >
-              <p>Title: {this.state.selectedShow.title}</p>
-              <p>Director: {this.state.selectedShow.director}</p>
-              <p>Year: {this.state.selectedShow.year}</p>
+              <p>Title: {this.state.selectedShow.primary_title}</p>
+              <p>Genre: {this.state.selectedShow.genres}</p>
+              <p>Year: {this.state.selectedShow.end_year}</p>
             </Modal>
           )}
         </div>

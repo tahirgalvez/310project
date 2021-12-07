@@ -21,7 +21,39 @@ app.get("/titles", async (req, res) => {
   var title = req.query.title;
 
   try{
-    pool.query(dbfunc.advancedSearchTitle(title, null, null, null, null, null, null, null, null, null, 1, 100, "title.t_const", true), function(err, result, fields) {
+    pool.query(dbfunc.advancedSearchTitle(title,'movie', null, null, null, null, null, null, null, null, 1, 100, "title.t_const", true), function(err, result, fields) {
+      if (err) console.log(err.message);
+      res.json(result.rows); // Sends result to browser
+      console.log(JSON.stringify(result.rows, null, 2));
+    });
+  }
+  catch (err) {
+    console.error(err.message);
+  }
+});
+
+app.get("/showss", async (req, res) => {
+
+  var title = req.query.title;
+
+  try{
+    pool.query(dbfunc.advancedSearchTitle(title,'tvseries', null, null, null, null, null, null, null, null, 1, 100, "title.t_const", true), function(err, result, fields) {
+      if (err) console.log(err.message);
+      res.json(result.rows); // Sends result to browser
+      console.log(JSON.stringify(result.rows, null, 2));
+    });
+  }
+  catch (err) {
+    console.error(err.message);
+  }
+});
+
+app.get("/people", async (req, res) => {
+
+  var title = req.query.title;
+
+  try{
+    pool.query(dbfunc.advancedSearchPerson(title, null,null,null,null,null,1,50,null,true), function(err, result, fields) {
       if (err) console.log(err.message);
       res.json(result.rows); // Sends result to browser
       console.log(JSON.stringify(result.rows, null, 2));
