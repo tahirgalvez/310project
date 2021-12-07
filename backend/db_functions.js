@@ -400,7 +400,7 @@ SET n_const = '${nconst}',
     primary_name = '${primaryName}',
     birth_year = '${birthYear}',
     death_year = '${deathYear}',
-    primary_professions = '{ ${primaryProfessions} }',
+    primary_profession = '{ ${primaryProfessions} }',
     known_for_titles = '{ ${knownForTitles} }'`;
 
         console.log(query);
@@ -433,7 +433,7 @@ DELETE FROM person
      * @param {string|string[]} professions string|string[] - Professions to filter for. This is an AND filter.
      * @param {number} page number - Page of UI to display. Assumes pages starts at 1.
      * @param {number} itemsPerPage number - Amount of items per page.
-     * @param {string|string[]} orderBy string|string[] - Columns in title to order by. (person.n_const, person.name, person.birth_year, person.death_year, person.primary_professions, and/or person.known_for_titles)
+     * @param {string|string[]} orderBy string|string[] - Columns in title to order by. (person.n_const, person.primary_name, person.birth_year, person.death_year, person.primary_profession, and/or person.known_for_titles)
      * @param {boolean} ascending boolean - If orderBy was specified, choose for it to be ascending or descending.
      * @returns string - SQL query command to search for people in the person table.
      */
@@ -471,11 +471,11 @@ FROM person
         if (professions != null) {
             if (Array.isArray(professions)) {
                 professions.forEach(profession => {
-                    query += `AND ('${profession}' = ANY(person.primary_professions)) `;
+                    query += `AND ('${profession}' = ANY(person.primary_profession)) `;
                 });
             }
             else {
-                query += `AND ('${professions}' = ANY(person.primary_professions)) `;
+                query += `AND ('${professions}' = ANY(person.primary_profession)) `;
             }
         }
 
