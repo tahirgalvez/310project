@@ -177,6 +177,20 @@ class Movies extends React.Component {
             {' '}
             Mystery <input type="checkbox" value="mystery" onChange={(e) => this.handleGenres(e)} />
             {' '}
+            Sci-fi <input type="checkbox" value="sci-fi" onChange={(e) => this.handleGenres(e)} />
+            {' '}
+            Comedy <input type="checkbox" value="comedy" onChange={(e) => this.handleGenres(e)} />
+            {' '}
+            Horror <input type="checkbox" value="horror" onChange={(e) => this.handleGenres(e)} />
+            {' '}
+            Thriller <input type="checkbox" value="thriller" onChange={(e) => this.handleGenres(e)} />
+            {' '}
+            Drama <input type="checkbox" value="drama" onChange={(e) => this.handleGenres(e)} />
+            {' '}
+            Fantasy <input type="checkbox" value="fantasy" onChange={(e) => this.handleGenres(e)} />
+            {' '}
+            Animation <input type="checkbox" value="animation" onChange={(e) => this.handleGenres(e)} />
+            {' '}
           </form>
         </div>
         <div className="Adults">
