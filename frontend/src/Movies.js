@@ -100,7 +100,6 @@ class Movies extends React.Component {
     }
 
     this.setState({ genres: genres });
-    console.log(genres);
   }
 
   async searchMovies(e) {

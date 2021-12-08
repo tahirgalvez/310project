@@ -65,6 +65,11 @@ class CrewCast extends React.Component {
       visible: false,
       selectedPerson: null,
       searchValue: "",
+      minBirthYear: null,
+      maxBirthYear: null,
+      minDeathYear: null,
+      maxDeathYear: null,
+      professions: [],
       personData: [],
     };
   }
@@ -91,9 +96,24 @@ class CrewCast extends React.Component {
     });
   };
 
+  handleProfessions = (e) => {
+    const professions = this.state.professions;
+    var index;
+
+    if (e.target.checked) {
+      professions.push(e.target.value);
+    }
+    else {
+      index = professions.indexOf(e.target.value);
+      professions.splice(index, 1);
+    }
+
+    this.setState({ professions: professions });
+  }
+
  async searchCrewCast(e) {
     try{
-      const resp =  await fetch(`/people?title=${this.state.searchValue}`)
+      const resp =  await fetch(`/people?name=${this.state.searchValue}&minBirthYear=${this.state.minBirthYear}&maxBirthYear=${this.state.maxBirthYear}&minDeathYear=${this.state.minDeathYear}&maxDeathYear=${this.state.maxDeathYear}&professions=${this.state.professions}`);
       const data = await resp.json()
       //console.log(data)
       this.setState({ personData: data })
@@ -112,6 +132,52 @@ class CrewCast extends React.Component {
         <br />
         <h1>CrewCast</h1>
         <br />
+
+        <InputGroup className="mb-3">
+          <InputGroup.Text id="basic-addon1"> Birth Year:</InputGroup.Text>
+          <FormControl
+            placeholder="Min"
+            type="number"
+            onChange={(e) => this.setState({ minBirthYear: e.target.value })}
+          />
+          <FormControl
+            placeholder="Max"
+            type="number"
+            onChange={(e) => this.setState({ maxBirthYear: e.target.value })}
+          />
+        </InputGroup>
+
+        <InputGroup className="mb-3">
+          <InputGroup.Text id="basic-addon1"> Death Year:</InputGroup.Text>
+          <FormControl
+            placeholder="Min"
+            type="number"
+            onChange={(e) => this.setState({ minDeathYear: e.target.value })}
+          />
+          <FormControl
+            placeholder="Max"
+            type="number"
+            onChange={(e) => this.setState({ maxDeathYear: e.target.value })}
+          />
+        </InputGroup>
+
+        <Container>
+        <div className="professions">
+          <form>
+            Director <input type="checkbox" value="director" onChange={(e) => this.handleProfessions(e)} />
+            {' '}
+            Writer <input type="checkbox" value="writer" onChange={(e) => this.handleProfessions(e)} />
+            {' '}
+            Actor <input type="checkbox" value="actor" onChange={(e) => this.handleProfessions(e)} />
+            {' '}
+            
+          </form>
+        </div>
+        </Container>
+
+        <br />
+        <br />
+
         <InputGroup size="lg">
           <Button
             variant="outline-secondary"
