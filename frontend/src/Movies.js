@@ -6,7 +6,8 @@ import { Table, Modal } from "antd";
 import InputGroup from "react-bootstrap/InputGroup";
 import { FormControl } from "react-bootstrap";
 import { Button } from "react-bootstrap";
-import { getOverflowOptions } from "antd/lib/tooltip/placements";
+import ToggleButton from "react-bootstrap/ToggleButton";
+import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 
 const columns = [
   {
@@ -74,15 +75,15 @@ class Movies extends React.Component {
   handleAdult = (e) => {
     // First time checkbox is clicked
     if (this.state.isAdult === null) {
-      this.setState({isAdult: 'true'});
+      this.setState({ isAdult: 'true' });
       return;
     }
 
     if (this.state.isAdult === 'true') {
-      this.setState({isAdult: 'false'});
+      this.setState({ isAdult: 'false' });
     }
     else {
-      this.setState({isAdult: 'true'});
+      this.setState({ isAdult: 'true' });
     }
   }
 
@@ -98,7 +99,7 @@ class Movies extends React.Component {
       genres.splice(index, 1);
     }
 
-    this.setState({genres: genres});
+    this.setState({ genres: genres });
     console.log(genres);
   }
 
@@ -107,13 +108,13 @@ class Movies extends React.Component {
     //   return movie.title.toLowerCase().indexOf(this.state.searchValue.toLowerCase()) >= 0;
     // });
 
-    try{
-      const resp =  await fetch(`/titles?title=${this.state.searchValue}&isAdult=${this.state.isAdult}&minYear=${this.state.minYear}&maxYear=${this.state.maxYear}&minRunTimeMinutes=${this.state.minRunTimeMinutes}&maxRunTimeMinutes=${this.state.maxRunTimeMinutes}&minRating=${this.state.minRating}&maxRating=${this.state.maxRating}&genres=${this.state.genres}`);
+    try {
+      const resp = await fetch(`/titles?title=${this.state.searchValue}&isAdult=${this.state.isAdult}&minYear=${this.state.minYear}&maxYear=${this.state.maxYear}&minRunTimeMinutes=${this.state.minRunTimeMinutes}&maxRunTimeMinutes=${this.state.maxRunTimeMinutes}&minRating=${this.state.minRating}&maxRating=${this.state.maxRating}&genres=${this.state.genres}`);
       const data = await resp.json()
       //console.log(data)
       this.setState({ movieData: data })
       //console.log(this.state.movieData)
-    }catch(err){
+    } catch (err) {
       console.log(err)
     }
   }
@@ -121,76 +122,70 @@ class Movies extends React.Component {
   render() {
     const { selectedRowKey } = this.state;
     //console.log(selectedRowKey, typeof selectedRowKey);
-
+    console.log(this.state)
     return (
       <Container align="center">
         <br />
         <h1>Movies</h1>
         <br />
 
-        <div className="Adults">
-            Adult Rated Movies Only?<input type="checkbox" value="isAdult" onChange={(e) => this.handleAdult(e)}/>
-        </div>
+        <InputGroup className="mb-3">
+          <InputGroup.Text id="basic-addon1">Air Date Year Range</InputGroup.Text>
+          <FormControl
+            placeholder="Start Year"
+            onChange={(e) => this.setState({ minYear: e.target.value })}
+          />
+          <FormControl
+            placeholder="End Year"
+            onChange={(e) => this.setState({ maxYear: e.target.value })}
+          />
+        </InputGroup>
 
-        <div className="Air Date">
-          <FormLabel>
-            From year to year (YYYY):
-            <input
-              name="minYear"
-              type="number"
-              value={this.state.minYear}
-              onChange={(e) => this.setState({ minYear: e.target.value })} />
-            -
-            <input
-              name="maxYear"
-              type="number"
-              value={this.state.maxYear}
-              onChange={(e) => this.setState({ maxYear: e.target.value })} />
-          </FormLabel>
-        </div>
+        <InputGroup className="mb-3">
+          <InputGroup.Text id="basic-addon1">Runtime Minutes:</InputGroup.Text>
+          <FormControl
+            placeholder="Min"
+            type="number"
+            onChange={(e) => this.setState({ minRunTimeMinutes: e.target.value })}
+          />
+          <FormControl
+            placeholder="Max"
+            type="number"
+            onChange={(e) => this.setState({ maxRunTimeMinutes: e.target.value })}
+          />
+        </InputGroup>
 
-        <div className="Runtime Minutes">
-          <FormLabel>
-            Runtime Minutes:
-            <input
-              name="minRuntimeMinutes"
-              type="number"
-              value={this.state.minRuntimeMinutes}
-              onChange={(e) => this.setState({ minRunTimeMinutes: e.target.value })} />
-            -
-            <input
-              name="maxRuntimeMinutes"
-              type="number"
-              value={this.state.maxRuntimeMinutes}
-              onChange={(e) => this.setState({ maxRunTimeMinutes: e.target.value })} />
-          </FormLabel>
-        </div>
-
-        <div className="Rating">
-          <FormLabel>
-            Star Rating Range (0 - 5):
-            <input
-              name="minRating"
-              type="number"
-              value={this.state.minRating}
-              onChange={(e) => this.setState({ minRating: e.target.value })} />
-            -
-            <input
-              name="maxRating"
-              type="number"
-              value={this.state.maxRating}
-              onChange={(e) => this.setState({ maxRating: e.target.value })} />
-          </FormLabel>
-        </div>
-        
+        <InputGroup className="mb-3">
+          <InputGroup.Text id="basic-addon1"> Star Rating Range (0 - 5):</InputGroup.Text>
+          <FormControl
+            placeholder="Min"
+            type="number"
+            onChange={(e) => this.setState({ minRating: e.target.value })}
+          />
+          <FormControl
+            placeholder="Max"
+            type="number"
+            onChange={(e) => this.setState({ maxRating: e.target.value })}
+          />
+        </InputGroup>
+        <Container>
         <div className="genres">
           <form>
-            Romance<input type="checkbox" value="romance" onChange={(e) => this.handleGenres(e)}/>
-            Action<input type="checkbox" value="action" onChange={(e) => this.handleGenres(e)}/>
-            Mystery<input type="checkbox" value="mystery" onChange={(e) => this.handleGenres(e)}/>
+            Romance <input type="checkbox" value="romance" onChange={(e) => this.handleGenres(e)} />
+            {' '}
+            Action <input type="checkbox" value="action" onChange={(e) => this.handleGenres(e)} />
+            {' '}
+            Mystery <input type="checkbox" value="mystery" onChange={(e) => this.handleGenres(e)} />
+            {' '}
           </form>
         </div>
+        <div className="Adults">
+          Adult Rated Movies Only? <input type="checkbox" value="isAdult" onChange={(e) => this.handleAdult(e)} />
+        </div>
+        </Container>
 
+        <br />
+        <br />
         <InputGroup size="lg">
           <Button
             variant="outline-secondary"
@@ -207,7 +202,6 @@ class Movies extends React.Component {
             onChange={(e) => this.setState({ searchValue: e.target.value })}
           />
         </InputGroup>
-
         <div className="holder">
           <p></p>
           <Table
