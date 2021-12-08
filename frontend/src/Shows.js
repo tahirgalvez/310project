@@ -151,6 +151,8 @@ class Shows extends React.Component {
               <p>Title: {this.state.selectedShow.primary_title}</p>
               <p>Genre: {this.state.selectedShow.genres.toString()}</p>
               <p>Year: {this.state.selectedShow.end_year}</p>
+              <p>Adult Show: {this.state.selectedShow.is_adult}</p>
+              <p>Runtime: {this.state.selectedShow.runtime_minutes}</p>
             </Modal>
           )}
         </div>

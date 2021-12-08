@@ -158,6 +158,8 @@ class CrewCast extends React.Component {
               <p>Name: {this.state.selectedPerson.primary_name}</p>
               <p>Primary Profession: {this.state.selectedPerson.primary_profession}</p>
               <p>Birth Year: {this.state.selectedPerson.birth_year}</p>
+              <p>Death Year: {this.state.selectedPerson.death_year}</p>
+              <p>Known for titles: {this.state.selectedPerson.known_for_titles}</p>
             </Modal>
           )}
         </div>

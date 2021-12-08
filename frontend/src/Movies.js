@@ -130,6 +130,8 @@ class Movies extends React.Component {
               <p>Title: {this.state.selectedMovie.primary_title}</p>
               <p>Genre: {this.state.selectedMovie.genres.toString()}</p>
               <p>Year: {this.state.selectedMovie.end_year}</p>
+              <p>Adult Movie: {this.state.selectedMovie.is_adult}</p>
+              <p>Runtime: {this.state.selectedMovie.runtime_minutes}</p>
             </Modal>
           )}
         </div>
