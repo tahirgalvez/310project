@@ -14,11 +14,6 @@ const columns = [
     key: "primary_title",
   },
   {
-    title: "Genre",
-    dataIndex: "genres",
-    key: "genres",
-  },
-  {
     title: "Year",
     dataIndex: "end_year",
     key: "end_year",
@@ -154,7 +149,7 @@ class Shows extends React.Component {
               onCancel={this.handleCancel}
             >
               <p>Title: {this.state.selectedShow.primary_title}</p>
-              <p>Genre: {this.state.selectedShow.genres}</p>
+              <p>Genre: {this.state.selectedShow.genres.toString()}</p>
               <p>Year: {this.state.selectedShow.end_year}</p>
             </Modal>
           )}
