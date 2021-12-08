@@ -1,11 +1,12 @@
 import React from "react";
-import { Container } from "react-bootstrap";
+import { Container, FormLabel } from "react-bootstrap";
 import autoBind from "react-autobind";
 import "antd/dist/antd.css";
 import { Table, Modal } from "antd";
 import InputGroup from "react-bootstrap/InputGroup";
 import { FormControl } from "react-bootstrap";
 import { Button } from "react-bootstrap";
+import { getOverflowOptions } from "antd/lib/tooltip/placements";
 
 const columns = [
   {
@@ -32,6 +33,17 @@ class Movies extends React.Component {
       selectedRowKey: null,
       visible: false,
       selectedMovie: null,
+      titleType: null,
+      isAdult: null,
+      minYear: null,
+      maxYear: null,
+      minRunTimeMinutes: null,
+      maxRunTimeMinutes: null,
+      minRating: null,
+      maxRating: null,
+      genres: [],
+      page: null,
+      itemsPerPage: null,
       searchValue: "",
       movieData: [],
     };
@@ -59,13 +71,44 @@ class Movies extends React.Component {
     });
   };
 
+  handleAdult = (e) => {
+    // First time checkbox is clicked
+    if (this.state.isAdult === null) {
+      this.setState({isAdult: 'true'});
+      return;
+    }
+
+    if (this.state.isAdult === 'true') {
+      this.setState({isAdult: 'false'});
+    }
+    else {
+      this.setState({isAdult: 'true'});
+    }
+  }
+
+  handleGenres = (e) => {
+    const genres = this.state.genres;
+    var index;
+
+    if (e.target.checked) {
+      genres.push(e.target.value);
+    }
+    else {
+      index = genres.indexOf(e.target.value);
+      genres.splice(index, 1);
+    }
+
+    this.setState({genres: genres});
+    console.log(genres);
+  }
+
   async searchMovies(e) {
     // let newMovies = data.filter((movie) => {
     //   return movie.title.toLowerCase().indexOf(this.state.searchValue.toLowerCase()) >= 0;
     // });
 
     try{
-      const resp =  await fetch(`/titles?title=${this.state.searchValue}`)
+      const resp =  await fetch(`/titles?title=${this.state.searchValue}&isAdult=${this.state.isAdult}&minYear=${this.state.minYear}&maxYear=${this.state.maxYear}&minRunTimeMinutes=${this.state.minRunTimeMinutes}&maxRunTimeMinutes=${this.state.maxRunTimeMinutes}&minRating=${this.state.minRating}&maxRating=${this.state.maxRating}&genres=${this.state.genres}`);
       const data = await resp.json()
       //console.log(data)
       this.setState({ movieData: data })
@@ -84,6 +127,70 @@ class Movies extends React.Component {
         <br />
         <h1>Movies</h1>
         <br />
+
+        <div className="Adults">
+            Adult Rated Movies Only?<input type="checkbox" value="isAdult" onChange={(e) => this.handleAdult(e)}/>
+        </div>
+
+        <div className="Air Date">
+          <FormLabel>
+            From year to year (YYYY):
+            <input
+              name="minYear"
+              type="number"
+              value={this.state.minYear}
+              onChange={(e) => this.setState({ minYear: e.target.value })} />
+            -
+            <input
+              name="maxYear"
+              type="number"
+              value={this.state.maxYear}
+              onChange={(e) => this.setState({ maxYear: e.target.value })} />
+          </FormLabel>
+        </div>
+
+        <div className="Runtime Minutes">
+          <FormLabel>
+            Runtime Minutes:
+            <input
+              name="minRuntimeMinutes"
+              type="number"
+              value={this.state.minRuntimeMinutes}
+              onChange={(e) => this.setState({ minRunTimeMinutes: e.target.value })} />
+            -
+            <input
+              name="maxRuntimeMinutes"
+              type="number"
+              value={this.state.maxRuntimeMinutes}
+              onChange={(e) => this.setState({ maxRunTimeMinutes: e.target.value })} />
+          </FormLabel>
+        </div>
+
+        <div className="Rating">
+          <FormLabel>
+            Star Rating Range (0 - 5):
+            <input
+              name="minRating"
+              type="number"
+              value={this.state.minRating}
+              onChange={(e) => this.setState({ minRating: e.target.value })} />
+            -
+            <input
+              name="maxRating"
+              type="number"
+              value={this.state.maxRating}
+              onChange={(e) => this.setState({ maxRating: e.target.value })} />
+          </FormLabel>
+        </div>
+        
+        <div className="genres">
+          <form>
+            Romance<input type="checkbox" value="romance" onChange={(e) => this.handleGenres(e)}/>
+            Action<input type="checkbox" value="action" onChange={(e) => this.handleGenres(e)}/>
+            Mystery<input type="checkbox" value="mystery" onChange={(e) => this.handleGenres(e)}/>
+          </form>
+        </div>
+
         <InputGroup size="lg">
           <Button
             variant="outline-secondary"
