@@ -20,8 +20,24 @@ app.get("/titles", async (req, res) => {
 
   var title = req.query.title;
 
+  var isAdult = req.query.isAdult; if (isAdult === 'null' || isAdult === '') isAdult = null;
+  if (isAdult === 'true') {isAdult = true;}
+  if (isAdult === 'false') {isAdult = null;}
+
+  var minYear = req.query.minYear; if (minYear === 'null' || minYear === '') minYear = null;
+  var maxYear = req.query.maxYear; if (maxYear === 'null' || maxYear === '') maxYear = null;
+  var minRunTimeMinutes = req.query.minRunTimeMinutes; if (minRunTimeMinutes === 'null' || minRunTimeMinutes === '') minRunTimeMinutes = null; 
+  var maxRunTimeMinutes = req.query.maxRunTimeMinutes; if (maxRunTimeMinutes === 'null' || maxRunTimeMinutes === '') maxRunTimeMinutes = null;
+  var minRating = req.query.minRating; if (minRating === 'null' || minRating === '') minRating = null;
+  var maxRating = req.query.maxRating; if (maxRating === 'null' || maxRating === '') maxRating = null;
+  
+  var genres;
+  if (req.query.genres != undefined) {
+    genres = req.query.genres.split(','); if (genres.length === 1 && genres[0] === '') genres = null;
+  }
+
   try{
-    pool.query(dbfunc.advancedSearchTitle(title,'movie', null, null, null, null, null, null, null, null, 1, 100, "title.t_const", true), function(err, result, fields) {
+    pool.query(dbfunc.advancedSearchTitle(title, 'movies', isAdult, minYear, maxYear, minRunTimeMinutes, maxRunTimeMinutes, minRating, maxRating, genres, 1, 100, "title.t_const", true), function(err, result, fields) {
       if (err) console.log(err.message);
       res.json(result.rows); // Sends result to browser
       console.log(JSON.stringify(result.rows, null, 2));
@@ -36,8 +52,24 @@ app.get("/showss", async (req, res) => {
 
   var title = req.query.title;
 
+  var isAdult = req.query.isAdult; if (isAdult === 'null' || isAdult === '') isAdult = null;
+  if (isAdult === 'true') {isAdult = true;}
+  if (isAdult === 'false') {isAdult = null;}
+
+  var minYear = req.query.minYear; if (minYear === 'null' || minYear === '') minYear = null;
+  var maxYear = req.query.maxYear; if (maxYear === 'null' || maxYear === '') maxYear = null;
+  var minRunTimeMinutes = req.query.minRunTimeMinutes; if (minRunTimeMinutes === 'null' || minRunTimeMinutes === '') minRunTimeMinutes = null; 
+  var maxRunTimeMinutes = req.query.maxRunTimeMinutes; if (maxRunTimeMinutes === 'null' || maxRunTimeMinutes === '') maxRunTimeMinutes = null;
+  var minRating = req.query.minRating; if (minRating === 'null' || minRating === '') minRating = null;
+  var maxRating = req.query.maxRating; if (maxRating === 'null' || maxRating === '') maxRating = null;
+  
+  var genres = null;
+  if (req.query.genres != undefined) {
+    genres = req.query.genres.split(','); if (genres.length === 1 && genres[0] === '') genres = null;
+  }
+
   try{
-    pool.query(dbfunc.advancedSearchTitle(title,'tvseries', null, null, null, null, null, null, null, null, 1, 100, "title.t_const", true), function(err, result, fields) {
+    pool.query(dbfunc.advancedSearchTitle(title, 'tvseries', isAdult, minYear, maxYear, minRunTimeMinutes, maxRunTimeMinutes, minRating, maxRating, genres, 1, 100, "title.t_const", true), function(err, result, fields) {
       if (err) console.log(err.message);
       res.json(result.rows); // Sends result to browser
       console.log(JSON.stringify(result.rows, null, 2));
@@ -50,10 +82,19 @@ app.get("/showss", async (req, res) => {
 
 app.get("/people", async (req, res) => {
 
-  var title = req.query.title;
+  console.log(req);
+  var name = req.query.name; if (name === 'null' || name === '') name = null;
+  var minBirthYear = req.query.minBirthYear; if (minBirthYear === 'null' || minBirthYear === '') minBirthYear = null;
+  var maxBirthYear = req.query.maxBirthYear; if (maxBirthYear === 'null' || maxBirthYear === '') maxBirthYear = null;
+  var minDeathYear = req.query.minDeathYear; if (minDeathYear === 'null' || minDeathYear === '') minDeathYear = null;
+  var maxDeathYear = req.query.maxDeathYear; if (maxDeathYear === 'null' || maxDeathYear === '') maxDeathYear = null;
+  var professions = null;
+  if (req.query.professions != undefined) {
+    professions = req.query.professions.split(','); if (professions.length === 1 && professions[0] === '') professions = null;
+  }
 
   try{
-    pool.query(dbfunc.advancedSearchPerson(title, null,null,null,null,null,1,50,null,true), function(err, result, fields) {
+    pool.query(dbfunc.advancedSearchPerson(name, minBirthYear, maxBirthYear, minDeathYear, maxDeathYear, professions, 1, 100, 'person.primary_name', true), function(err, result, fields) {
       if (err) console.log(err.message);
       res.json(result.rows); // Sends result to browser
       console.log(JSON.stringify(result.rows, null, 2));

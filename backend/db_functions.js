@@ -141,10 +141,10 @@ DELETE FROM title
         var query = `
 SELECT title.t_const, title.title_type, title.primary_title, title.original_title, title.is_adult, title.start_year, title.end_year, title.runtime_minutes, title.genres, rating.average_rating, rating.num_votes 
 FROM title LEFT JOIN rating on title.t_const = rating.t_const
-    WHERE (title.primary_title LIKE '%${title}%' OR title.original_title LIKE '%${title}%') `;
+    WHERE (title.primary_title ILIKE '%${title}%' OR title.original_title ILIKE '%${title}%') `;
 
         if (titleType != null) {
-            query += `AND ('${titleType}' = title.title_type) `;
+            query += `AND ('${titleType}' ILIKE title.title_type) `;
         }
 
         if (isAdult != null) {
@@ -189,11 +189,11 @@ FROM title LEFT JOIN rating on title.t_const = rating.t_const
         if (genres != null) {
             if (Array.isArray(genres)) {
                 genres.forEach(genre => {
-                    query += `AND ('${genre}' = ANY(title.genres)) `;
+                    query += `AND ('${genre}' ILIKE ANY(title.genres)) `;
                 });
             }
             else {
-                query += `AND ('${genres}' = ANY(title.genres)) `;
+                query += `AND ('${genres}' ILIKE ANY(title.genres)) `;
             }
         }
 
@@ -446,7 +446,7 @@ DELETE FROM person
         var query = `
 SELECT person.n_const, person.primary_name, person.birth_year, person.death_year, person.primary_profession, person.known_for_titles
 FROM person
-    WHERE (person.primary_name LIKE '%${name}%') `;
+    WHERE (person.primary_name ILIKE '%${name}%') `;
 
         if (minBirthYear != null && maxBirthYear != null) {
             query += `AND (person.birth_year >= ${minBirthYear} AND person.birth_year <= ${maxBirthYear}) `
@@ -471,11 +471,11 @@ FROM person
         if (professions != null) {
             if (Array.isArray(professions)) {
                 professions.forEach(profession => {
-                    query += `AND ('${profession}' = ANY(person.primary_profession)) `;
+                    query += `AND ('${profession}' ILIKE ANY(person.primary_profession)) `;
                 });
             }
             else {
-                query += `AND ('${professions}' = ANY(person.primary_profession)) `;
+                query += `AND ('${professions}' ILIKE ANY(person.primary_profession)) `;
             }
         }
 
