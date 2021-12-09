@@ -15,8 +15,8 @@ const columns = [
   },
   {
     title: "Year",
-    dataIndex: "end_year",
-    key: "end_year",
+    dataIndex: "start_year",
+    key: "start_year",
   },
 ];
 
@@ -264,9 +264,10 @@ class Shows extends React.Component {
             >
               <p>Title: {this.state.selectedShow.primary_title}</p>
               <p>Genre: {this.state.selectedShow.genres.toString()}</p>
-              <p>Year: {this.state.selectedShow.end_year}</p>
-              <p>Adult Show: {this.state.selectedShow.is_adult}</p>
+              <p>Year: {this.state.selectedShow.start_year}</p>
+              <p>Adult Show: {this.state.selectedShow.is_adult.toString()}</p>
               <p>Runtime: {this.state.selectedShow.runtime_minutes}</p>
+              <p>Rating: {this.state.selectedShow.average_rating}</p> 
             </Modal>
           )}
         </div>

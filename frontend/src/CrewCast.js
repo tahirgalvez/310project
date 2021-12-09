@@ -130,7 +130,7 @@ class CrewCast extends React.Component {
     return (
       <Container align="center">
         <br />
-        <h1>CrewCast</h1>
+        <h1>Crew & Cast</h1>
         <br />
 
         <InputGroup className="mb-3">

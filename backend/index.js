@@ -37,7 +37,7 @@ app.get("/titles", async (req, res) => {
   }
 
   try{
-    pool.query(dbfunc.advancedSearchTitle(title, 'movies', isAdult, minYear, maxYear, minRunTimeMinutes, maxRunTimeMinutes, minRating, maxRating, genres, 1, 100, "title.t_const", true), function(err, result, fields) {
+    pool.query(dbfunc.advancedSearchTitle(title, 'movie', isAdult, minYear, maxYear, minRunTimeMinutes, maxRunTimeMinutes, minRating, maxRating, genres, 1, 100, "title.t_const", true), function(err, result, fields) {
       if (err) console.log(err.message);
       res.json(result.rows); // Sends result to browser
       console.log(JSON.stringify(result.rows, null, 2));

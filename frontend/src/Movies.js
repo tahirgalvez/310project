@@ -17,8 +17,8 @@ const columns = [
   },
   {
     title: "Year",
-    dataIndex: "end_year",
-    key: "end_year",
+    dataIndex: "start_year",
+    key: "start_year",
   },
 ];
 
@@ -243,9 +243,10 @@ class Movies extends React.Component {
             >
               <p>Title: {this.state.selectedMovie.primary_title}</p>
               <p>Genre: {this.state.selectedMovie.genres.toString()}</p>
-              <p>Year: {this.state.selectedMovie.end_year}</p>
-              <p>Adult Movie: {this.state.selectedMovie.is_adult}</p>
+              <p>Year: {this.state.selectedMovie.start_year}</p>
+              <p>Adult Movie: {this.state.selectedMovie.is_adult.toString()}</p>
               <p>Runtime: {this.state.selectedMovie.runtime_minutes}</p>
+              <p>Rating: {this.state.selectedMovie.average_rating}</p> 
             </Modal>
           )}
         </div>
