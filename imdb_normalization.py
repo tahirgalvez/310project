@@ -134,8 +134,6 @@ def make_titles(title_basics):
     'genres':'genres',
     })
 
-    titles = titles.dropna()
-
     titles['genres'] = "{" + titles['genres'].astype(str) + "}"
 
     # Output to file
