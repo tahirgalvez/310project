@@ -6,8 +6,8 @@ CREATE DATABASE csce310project;
 CREATE TABLE title(
     t_const varchar(50) PRIMARY KEY,
     title_type varchar(50),
-    primary_title varchar(50),
-    original_title varchar(50),
+    primary_title varchar(200),
+    original_title varchar(200),
     is_adult boolean,
     start_year integer,
     end_year integer,
@@ -23,20 +23,20 @@ CREATE TABLE rating(
 
 CREATE TABLE person(
     n_const varchar(50) PRIMARY KEY,
-    primary_name varchar(50),
+    primary_name varchar(200),
     birth_year integer,
     death_year integer,
-    primary_profession varchar(50)[],
-    known_for_titles varchar(50)[]
+    primary_profession varchar(200)[],
+    known_for_titles varchar(200)[]
 );
 
 CREATE TABLE title_cast(
     t_const varchar(50) REFERENCES title(t_const) ON DELETE CASCADE,
     n_const varchar(50) REFERENCES person(n_const) ON DELETE CASCADE,
     ordering integer,
-    category varchar(50),
-    job varchar(50),
-    characters varchar(50)
+    category varchar(200),
+    job varchar(200),
+    characters varchar(200)
 );
 
 CREATE TABLE episode(
