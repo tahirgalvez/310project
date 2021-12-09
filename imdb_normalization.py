@@ -54,7 +54,7 @@ def make_episode(title_episode):
     })
 
     # Output to file
-    episode.to_csv('episode.tsv',index=False,na_rep=r'\N',sep='\t')
+    episode.to_csv('episode.tsv',index=False,header=False,na_rep=r'\N',sep='\t')
 
 #-------------------------------------------------------------------------------
 
@@ -79,8 +79,11 @@ def make_person(name_basics):
     'knownForTitles':'known_for_titles',
     })
 
+    person['primary_profession'] = "{" + person['primary_profession'].astype(str) + "}"
+    person['known_for_titles'] = "{" + person['known_for_titles'].astype(str) + "}"
+
     # Output to file
-    person.to_csv('person.tsv',index=False,na_rep=r'\N',sep='\t')
+    person.to_csv('person.tsv',index=False,header=False,na_rep=r'\N',sep='\t')
 
 #-------------------------------------------------------------------------------
 
@@ -103,7 +106,7 @@ def make_cast(title_principals):
     })
 
     # Output to file
-    cast.to_csv('cast.tsv',index=False,na_rep=r'\N',sep='\t')
+    cast.to_csv('cast.tsv',index=False,header=False,na_rep=r'\N',sep='\t')
 
 #-------------------------------------------------------------------------------
 # Create titles table
@@ -133,8 +136,10 @@ def make_titles(title_basics):
 
     titles = titles.dropna()
 
+    titles['genres'] = "{" + titles['genres'].astype(str) + "}"
+
     # Output to file
-    titles.to_csv('titles.tsv',index=False,na_rep=r'\N',sep='\t')
+    titles.to_csv('titles.tsv',index=False,header=False,na_rep=r'\N',sep='\t')
 
 #-------------------------------------------------------------------------------
 
@@ -153,7 +158,7 @@ def make_rating(title_ratings):
     })
 
     # Output to file
-    rating.to_csv('rating.tsv',index=False,na_rep=r'\N',sep='\t')
+    rating.to_csv('rating.tsv',index=False,header=False,na_rep=r'\N',sep='\t')
 
 #------------------------ END OF FUNCTION DEFINITIONS --------------------------
 
@@ -161,7 +166,7 @@ def make_rating(title_ratings):
 
 # Set path to IMDb data
 # ---------------------
-data_path = './imdb_data'
+data_path = 'G:/School/College/SEM8/CSCE310/project/imdb_data'
 print('Looking for IMDb data in: ',data_path,'\n')
 
 
